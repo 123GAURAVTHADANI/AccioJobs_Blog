@@ -2,6 +2,7 @@ const { Schema, default: mongoose } = require("mongoose");
 var bcrypt = require("bcrypt");
 
 var jwt = require("jsonwebtoken");
+const article = require("./article.schema");
 
 const userSchema = new Schema(
   {
@@ -26,12 +27,12 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    // article: [
-    //   {
-    //     article_id: Schema.Types.ObjectId,
-    //     ref: "article",
-    //   },
-    // ],
+    blog: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Article",
+      },
+    ],
     role: {
       type: String,
       enum: ["SUPER ADMIN", "ADMIN", "USER"],
@@ -50,13 +51,21 @@ userSchema.pre("save", async function (next) {
   this.password = await bcrypt.hash(this.password, 10);
 });
 
-// userSchema.methods = {
-//   comparePassword: async function (plainPassword) {
-//     return await bcrypt.compare(plainPassword, this.password);
-//   },
+userSchema.methods = {
+  comparePassword: async function (plainPassword) {
+    return await bcrypt.compare(plainPassword, this.password);
+  },
 
-//   generateJWTToken: async function () {},
-// };
+  generateJWTToken: async function () {
+    return await jwt.sign(
+      { id: this._id, role: this.role },
+      process.env.JWT_SECRET_KEY,
+      {
+        expiresIn: process.env.JWT_EXPIRE,
+      }
+    );
+  },
+};
 
 const User = mongoose.model("User", userSchema);
 module.exports = User;
