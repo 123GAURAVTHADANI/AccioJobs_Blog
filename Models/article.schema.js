@@ -1,5 +1,4 @@
 const { Schema, default: mongoose } = require("mongoose");
-const User = require("./user.schema");
 
 const articleSchema = new Schema({
   title: {
@@ -13,7 +12,14 @@ const articleSchema = new Schema({
   user: {
     type: Schema.Types.ObjectId,
     ref: "User",
+    required: true,
   },
+  comment: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Comment",
+    },
+  ],
 });
 const Article = mongoose.model("Article", articleSchema);
 

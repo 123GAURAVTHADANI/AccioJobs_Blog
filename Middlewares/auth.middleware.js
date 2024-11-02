@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 
 const authorizeRoles = (...roles) =>
   asyncHandler(async (req, res, next) => {
-    if (!roles.includes(req.query.role)) {
+    if (!roles.includes(req.user.role)) {
       res.json({ Message: "You are not eligible" });
     } else {
       next();

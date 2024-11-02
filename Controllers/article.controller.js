@@ -26,6 +26,7 @@ function GetDetails(_, res) {
   try {
     Article.find({})
       .populate("user")
+      .populate("comment")
       .then((response) => {
         res.json({ Message: "Article Details Fetched!!", data: response });
       })
