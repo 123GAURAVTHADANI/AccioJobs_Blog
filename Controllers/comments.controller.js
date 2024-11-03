@@ -12,10 +12,14 @@ const CreateComment = asyncHandler(async (req, res, next) => {
           data: response,
         });
         Article.findByIdAndUpdate(
-          response.blog,
+          { _id: response.blog },
           { $push: { comment: response._id } },
-          { new: true }
-        );
+          {
+            new: true,
+          }
+        ).then((response) => {
+          console.log(response);
+        });
       } catch (error) {
         res
           .json({ Message: "Something went wrong!!", error: error })

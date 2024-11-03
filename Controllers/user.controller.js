@@ -26,6 +26,7 @@ function CreateUser(req, res) {
 function GetUsers(req, res) {
   try {
     User.find({})
+      .populate("blog")
       .then((response) => {
         res.json({ Message: "User Details Fetched!!", data: response });
       })
@@ -58,4 +59,18 @@ const loginUser = asyncHandler(async (req, res, next) => {
   });
 });
 
-module.exports = { CreateUser, GetUsers, loginUser };
+const DeleteUser = asyncHandler(async (req, res, next) => {
+  let { id } = req.params;
+  User.findByIdAndDelete(id)
+    .then((response) => {
+      res.json({
+        Message: "User is Deleted!!!",
+        data: response,
+      });
+    })
+    .catch((err) => {
+      res.json({ Message: "Something went wrong!!", error: err }).status(501);
+    });
+});
+
+module.exports = { CreateUser, GetUsers, loginUser, DeleteUser };
